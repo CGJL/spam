@@ -2,9 +2,10 @@
 
 For details, please see http://ics-software-engineering.github.io/meteor-application-template-react/
 
-## Pending tasks
+
+## Main tasks
 ### Initial
-* Codebase template setup
+* Meteor React template setup
 * Database setup
 ### Webpages
 * User accounts
@@ -18,3 +19,8 @@ For details, please see http://ics-software-engineering.github.io/meteor-applica
 * Modified passwords notification
 
 ## Completed tasks
+* Week 2
+  * Luke McDonald - Meteor React template setup 
+  * Christina Chen - Add Password UI mockup
+* Plan for Week 3
+  * Start on functionality implementation for the pages
