@@ -8,8 +8,11 @@ https://github.com/CGJL/spam/projects/1
 
 ## Developers
 Christina Chen (christina-chen-cco2)
+
 Gabriel Undan (gabrielundan)
-Jessica Ocampo
+
+Jessica Ocampo (jnocampo)
+
 Luke McDonald (lukemcd9)
 
 ### Features (to add on)
