@@ -6,33 +6,71 @@ import SimpleSchema from 'simpl-schema';
 import swal from 'sweetalert';
 import { Passwords } from '../../api/password/Password';
 import bcrypt from 'bcryptjs';
+import iroh from 'iroh';
 
-const nameValidate = (name, password) => {
-  if (password && name && password === name) {
-    swal('Error', 'Password not added: The password\'s name must not be the same as the password.', 'error');
-  }
-  return password === name;
+const passwordValidIroh = () => {
+  let code = `
+    function passwordValid(password) {
+      if (password !== null) {
+        if (password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/) === null) {
+          return false;
+        }
+      }
+      return true;
+    }
+    passwordValid(null);
+    passwordValid('some non-null, invalid pwd...');
+    passwordValid('Abc123!@#');
+  `;
+  let stage = new Iroh.Stage(code);
+  stage.addListener(Iroh.FUNCTION).on('enter', function(e) {
+    console.log("argument: " + e.arguments[0]);
+  });
+  stage.addListener(Iroh.FUNCTION).on('return', function(e) {
+    console.log("return: " + e.return);
+  });
+  eval(stage.script);
 }
 
-const urlValidate = (url, password) => {
-  if (password && url && password === url) {
-    swal('Error', 'Password not added: The URL must not be the same as the password.', 'error');
+const nameValid = (name, password) => {
+  if (password !== null && name !== null) {
+    if (password === name) {
+      swal('Error', 'Password not added: The password\'s name must not be the same as the password.', 'error');
+      return false;
+    }
   }
-  return password === url;
+  return true;
 }
 
-const passwordValidate = (password) => {
-  if (password && password !== "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$") {
-    swal('Error', 'Password not added: Password must be 8 - 20 characters long and have at least one uppercase letter, lowercase letter, number, and special character', 'error');
+const urlValid = (url, password) => {
+  if (password !== null && url != null) {
+    if (password === url) {
+      swal('Error', 'Password not added: The URL must not be the same as the password.', 'error');
+      return false;
+    }
   }
-  return password !== "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$";
+  return true;
 }
 
-const confirmPasswordValidate = (password, confirmPassword) => {
-  if (password && confirmPassword && password !== confirmPassword) {
-    swal('Error', 'Password not added: \'Password\' and \'Confirm Password\' fields do not match.', 'error');
+const passwordValid = (password) => {
+  passwordValidIroh();
+  if (password !== null) {
+    if (password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/) === null) {
+      swal('Error', 'Password not added: Password must be 8 - 20 characters long and have at least one uppercase letter, lowercase letter, number, and special character', 'error');
+      return false;
+    }
   }
-  return password !== confirmPassword;
+  return true;
+}
+
+const confirmPasswordValid = (password, confirmPassword) => {
+  if (password != null && confirmPassword != null) {
+    if (password !== confirmPassword) {
+      swal('Error', 'Password not added: \'Password\' and \'Confirm Password\' fields do not match.', 'error');
+      return false;
+    }
+  }
+  return true;
 }
 
 const formSchema = new SimpleSchema({
@@ -41,7 +79,7 @@ const formSchema = new SimpleSchema({
     min: 8,
     max: 20,
     custom() {
-      return passwordValidate(this.value);
+      return passwordValid(this.value);
     }
   },
   confirmPassword: {
@@ -49,7 +87,7 @@ const formSchema = new SimpleSchema({
     min: 8,
     max: 20,
     custom() {
-      return confirmPasswordValidate(this.value, this.field('password').value);
+      return confirmPasswordValid(this.value, this.field('password').value);
     }
   },
   url: {
@@ -57,7 +95,7 @@ const formSchema = new SimpleSchema({
     min: 3,
     max: 2048,
     custom() {
-      return urlValidate(this.value, this.field('password').value)
+      return urlValid(this.value, this.field('password').value)
     }
   },
   name: {
@@ -65,7 +103,7 @@ const formSchema = new SimpleSchema({
     required: false,
     max: 20,
     custom() {
-      return nameValidate(this.value, this.field('password').value)
+      return nameValid(this.value, this.field('password').value)
     }
   }
 });

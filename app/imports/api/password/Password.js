@@ -4,7 +4,7 @@ import { Tracker } from 'meteor/tracker';
 
 class PasswordsCollection {
   constructor() {
-    this.name = 'PasswordsCollection';
+    this.name = 'Passwords';
     this.collection = new Mongo.Collection(this.name);
     this.schema = new SimpleSchema({
       password: String,
