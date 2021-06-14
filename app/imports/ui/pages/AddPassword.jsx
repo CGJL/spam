@@ -4,7 +4,7 @@ import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import { AutoForm, ErrorsField, SubmitField, TextField } from 'uniforms-semantic';
 import SimpleSchema from 'simpl-schema';
 import swal from 'sweetalert';
-import { Passwords } from '../../api/password/Password';
+import { Password } from '../../api/password/Password';
 import bcrypt from 'bcryptjs';
 import iroh from 'iroh';
 
@@ -145,7 +145,7 @@ class AddPassword extends React.Component {
     const { password, url, name } = data;
     const hash = this.hashPassword(password);
     if (hash) {
-      Passwords.collection.insert({ password: hash, url: url, name: name, date: new Date(), owner: Meteor.user().username },
+      Password.collection.insert({ password: hash, url: url, name: name, date: new Date(), owner: Meteor.user().username },
         (error) => {
           if (error) {
             swal('Error', error.message, 'error');

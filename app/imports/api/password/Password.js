@@ -34,7 +34,8 @@ class PasswordCollection {
       description: {
         type: String,
         defaultValue: '',
-      }, {tracker: Tracker});
+      }
+    }, { tracker: Tracker });
 
       /*Attach schema to collection
       so all items inserted to document is checked against schema. */
@@ -47,9 +48,9 @@ class PasswordCollection {
   }
 }
 
-/** 
- *  Instance of type collection. 
- * @type {StuffsColleciton}
+/**
+ *  Instance of type collection.
+ * @type {PasswordCollection}
  */
 
 export const Password = new PasswordCollection();
