@@ -15,6 +15,10 @@ class PasswordCollection {
 
     /* Defining the structure of each document in the collection */
     this.schema = new SimpleSchema({
+      owner: {
+        type: String,
+        defaultValue: 'None',
+      },
       image: {
         type: String,
         defaultValue: 'https://react.semantic-ui.com/images/wireframe/image.png',
