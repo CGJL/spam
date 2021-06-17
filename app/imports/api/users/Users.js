@@ -3,7 +3,7 @@ import SimpleSchema from 'simpl-schema';
 import { Tracker } from 'meteor/tracker';
 
 /** Define a Mongo collection to hold the data. */
-const Users = new Mongo.Collection('Users');
+const Users = new Mongo.Collection('UsersCollection');
 
 const UsersSchema = new SimpleSchema({
 	// The email the user uses to login
