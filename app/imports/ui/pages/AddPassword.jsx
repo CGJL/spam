@@ -117,43 +117,37 @@ formSchema.labels({
 
 const bridge = new SimpleSchema2Bridge(formSchema);
 
-// columns for Password table in database: password, url, name, date, owner
 class AddPassword extends React.Component {
-
-  hashPassword(newPassword, owner) {
-    // TODO: compare with columns in other tables like Users
-    const hasExistingMatch = Passwords.collection.find( { $where: () => {
-      return this.owner === owner && (bcrypt.compare(newPassword, this.password)
-          || newPassword === this.name
-          || newPassword === this.url
-          || newPassword === this.owner);
-    } } );
-    if (hasExistingMatch) {
-      swal('Error', 'Password not added: Password cannot be the same as your name or an existing password, URL, or name.', 'error');
-      return null;
-    } else {
-      return bcrypt.hash(newPassword, 10, (error, hash) => {
-        if (error) {
-          swal('Error', error.message, 'error');
-        }
-        return hash;
-      });
-    }
-  }
 
   submit(data, formRef) {
     const { password, url, name } = data;
-    const hash = this.hashPassword(password);
-    if (hash) {
-      Password.collection.insert({ password: hash, url: url, name: name, date: new Date(), owner: Meteor.user().username },
-        (error) => {
-          if (error) {
-            swal('Error', error.message, 'error');
-          } else {
-            swal('Success', 'Password added successfully', 'success');
-            formRef.reset();
-          }
-        });
+
+    const hasExistingMatch = Password.collection.find( { $where: () => {
+        return this.username === username
+          && (bcrypt.compare(password, this.password)
+            || password === this.name
+            || password === this.url
+            || password === this.username);
+      } } );
+
+    if (hasExistingMatch.count() === 0) {
+      bcrypt.hash(password, 10, (error, hash) => {
+        if (error) {
+          swal('Error', error.message, 'error');
+        } else {
+          Password.collection.insert({ password: hash, url: url, name: name, date: new Date(), username: Meteor.user().username },
+            (error) => {
+              if (error) {
+                swal('Error', error.message, 'error');
+              } else {
+                swal('Success', 'Password added successfully', 'success');
+                formRef.reset();
+              }
+            });
+        }
+      });
+    } else {
+      swal('Error', 'Password not added: Password cannot be the same as your username or an existing password, URL, or password name.', 'error');
     }
   }
 

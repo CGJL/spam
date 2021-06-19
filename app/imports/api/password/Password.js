@@ -1,7 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { Tracker } from 'meteor/tracker';
-import { string } from 'prop-types';
 
 /* Encapsulates state and variable values for stuff. */
 class PasswordCollection {
@@ -15,25 +14,24 @@ class PasswordCollection {
 
     /* Defining the structure of each document in the collection */
     this.schema = new SimpleSchema({
-      owner: {
-        type: String,
-        defaultValue: 'None',
-      },
       image: {
         type: String,
         defaultValue: 'https://react.semantic-ui.com/images/wireframe/image.png',
       },
       url: {
-        type: String,
-        defaultValue: 'None',
+        type: String
       },
       username: {
-        type: String,
-        defaultValue: 'None',
+        type: String
       },
       password: {
-        type: String,
-        defaultValue: 'None',
+        type: String
+      },
+      name: {
+        type: String
+      },
+      date: {
+        type: Date
       },
       description: {
         type: String,
