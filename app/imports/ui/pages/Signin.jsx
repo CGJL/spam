@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Link, Redirect } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
 import { Container, Form, Grid, Header, Message, Segment } from 'semantic-ui-react';
+import { EncryptionKey } from '../../api/encryption/EncryptionKey';
+import { CryptoUtil } from '../../api/encryption/CryptoUtil';
 
 /**
  * Signin page overrides the form’s submit event and call Meteor’s loginWithPassword().
@@ -28,6 +30,12 @@ export default class Signin extends React.Component {
       if (err) {
         this.setState({ error: err.reason });
       } else {
+        // Clear local EncryptionKey MongoDB Collection
+        EncryptionKey.remove({});
+        
+        // Populate Collection using SHA512 hash of password as the encryption key
+        EncryptionKey.insert({key: CryptoUtil.generateKey(password)});
+
         this.setState({ error: '', redirectToReferer: true });
       }
     });
