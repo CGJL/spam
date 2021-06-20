@@ -9,6 +9,8 @@ import SimpleSchema from 'simpl-schema';
 import swal from 'sweetalert';
 import { Password } from '../../api/password/Password';
 import bcrypt from 'bcryptjs';
+import { CryptoUtil } from '../../api/encryption/CryptoUtil';
+import { EncryptionKey } from '../../api/encryption/EncryptionKey';
 import iroh from 'iroh';
 
 
@@ -126,11 +128,8 @@ class AddPassword extends React.Component {
     const dataValid = passwordValid(password, this.props.passwords) && confirmPasswordValid(confirmPassword) && urlValid(url, password, this.props.passwords) && nameValid(name, password);
 
     if (dataValid) {
-      bcrypt.hash(password, 10, (hashError, hash) => {
-        if (hashError) {
-          swal('Error', hashError.message, 'error');
-        } else {
-          Password.collection.insert({ password: hash, url: url, name: name ? name : url, date: new Date(), username: Meteor.user().username },
+      let encryptedPass = CryptoUtil.encryptPassword(password, EncryptionKey.findOne().key);
+          Password.collection.insert({ password: encryptedPass, url: url, name: name ? name : url, date: new Date(), username: Meteor.user().username },
             (error) => {
               if (error) {
                 swal('Error', error.message, 'error');
@@ -139,8 +138,6 @@ class AddPassword extends React.Component {
                 formRef.reset();
               }
             });
-        }
-      });
     }
   }
 
