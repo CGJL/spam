@@ -61,7 +61,7 @@ const urlValid = (url, password, existingPasswords) => {
 }
 
 const passwordValid = (password, existingPasswords) => {
-  passwordValidIroh();
+  //passwordValidIroh();
   if (password !== null) {
     const existingMatches = existingPasswords.filter(existingPassword =>
       password === Meteor.user().username || password === existingPassword.name || password === existingPassword.url);
