@@ -15,6 +15,7 @@ import NotFound from '../pages/NotFound';
 import Signin from '../pages/Signin';
 import Signup from '../pages/Signup';
 import Signout from '../pages/Signout';
+import { EncryptionKey } from '../../api/encryption/EncryptionKey';
 
 /** Top-level layout component for this application. Called in imports/startup/client/startup.jsx. */
 class App extends React.Component {
@@ -50,11 +51,17 @@ const ProtectedRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={(props) => {
-      const isLogged = Meteor.userId() !== null;
-      return isLogged ?
-        (<Component {...props} />) :
-        (<Redirect to={{ pathname: '/signin', state: { from: props.location } }}/>
+      // User is considered logged in if a userId is set and their encryption key is generated.
+      const isLogged = Meteor.userId() !== null && EncryptionKey.find().count() !== 0;
+      if (isLogged) {
+        return (<Component {...props} />);
+      } else {
+        // Logs a user out if they somehow didn't have their encryption key in their local MongoDB
+        // This is done because the encryption key is only generated on login as it's derived from the user password
+        Meteor.logout();
+        return (<Redirect to={{ pathname: '/signin', state: { from: props.location } }}/>
         );
+      }
     }}
   />
 );
