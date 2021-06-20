@@ -1,5 +1,8 @@
 import React from 'react';
-import { Grid, Header, Segment } from 'semantic-ui-react';
+import { Meteor } from 'meteor/meteor';
+import { withTracker } from 'meteor/react-meteor-data';
+import PropTypes from 'prop-types';
+import { Grid, Header, Loader, Segment } from 'semantic-ui-react';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import { AutoForm, ErrorsField, SubmitField, TextField } from 'uniforms-semantic';
 import SimpleSchema from 'simpl-schema';
@@ -7,6 +10,7 @@ import swal from 'sweetalert';
 import { Password } from '../../api/password/Password';
 import bcrypt from 'bcryptjs';
 import iroh from 'iroh';
+
 
 const passwordValidIroh = () => {
   let code = `
@@ -42,21 +46,30 @@ const nameValid = (name, password) => {
   return true;
 }
 
-const urlValid = (url, password) => {
+const urlValid = (url, password, existingPasswords) => {
   if (password !== null && url != null) {
+    const existingMatches = existingPasswords.filter(existingPassword => url === existingPassword.url);
     if (password === url) {
       swal('Error', 'Password not added: The URL must not be the same as the password.', 'error');
+      return false;
+    } else if (existingMatches.length > 0) {
+      swal('Error', 'Password not added: The URL cannot be the same as an existing URL.', 'error');
       return false;
     }
   }
   return true;
 }
 
-const passwordValid = (password) => {
+const passwordValid = (password, existingPasswords) => {
   passwordValidIroh();
   if (password !== null) {
+    const existingMatches = existingPasswords.filter(existingPassword =>
+      password === Meteor.user().username || password === existingPassword.name || password === existingPassword.url);
     if (password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/) === null) {
       swal('Error', 'Password not added: Password must be 8 - 20 characters long and have at least one uppercase letter, lowercase letter, number, and special character', 'error');
+      return false;
+    } else if (existingMatches.length > 0) {
+      swal('Error', 'Password not added: Password cannot be the same as your username or an existing URL or password name.', 'error');
       return false;
     }
   }
@@ -77,34 +90,22 @@ const formSchema = new SimpleSchema({
   password: {
     type: String,
     min: 8,
-    max: 20,
-    custom() {
-      return passwordValid(this.value);
-    }
+    max: 20
   },
   confirmPassword: {
     type: String,
     min: 8,
-    max: 20,
-    custom() {
-      return confirmPasswordValid(this.value, this.field('password').value);
-    }
+    max: 20
   },
   url: {
     type: String,
     min: 3,
-    max: 2048,
-    custom() {
-      return urlValid(this.value, this.field('password').value)
-    }
+    max: 2048
   },
   name: {
     type: String,
     required: false,
-    max: 20,
-    custom() {
-      return nameValid(this.value, this.field('password').value)
-    }
+    max: 20
   }
 });
 
@@ -117,47 +118,37 @@ formSchema.labels({
 
 const bridge = new SimpleSchema2Bridge(formSchema);
 
-// columns for Password table in database: password, url, name, date, owner
 class AddPassword extends React.Component {
 
-  hashPassword(newPassword, owner) {
-    // TODO: compare with columns in other tables like Users
-    const hasExistingMatch = Passwords.collection.find( { $where: () => {
-      return this.owner === owner && (bcrypt.compare(newPassword, this.password)
-          || newPassword === this.name
-          || newPassword === this.url
-          || newPassword === this.owner);
-    } } );
-    if (hasExistingMatch) {
-      swal('Error', 'Password not added: Password cannot be the same as your name or an existing password, URL, or name.', 'error');
-      return null;
-    } else {
-      return bcrypt.hash(newPassword, 10, (error, hash) => {
-        if (error) {
-          swal('Error', error.message, 'error');
+  submit(data, formRef) {
+    const { password, confirmPassword, url, name } = data;
+
+    const dataValid = passwordValid(password, this.props.passwords) && confirmPasswordValid(confirmPassword) && urlValid(url, password, this.props.passwords) && nameValid(name, password);
+
+    if (dataValid) {
+      bcrypt.hash(password, 10, (hashError, hash) => {
+        if (hashError) {
+          swal('Error', hashError.message, 'error');
+        } else {
+          Password.collection.insert({ password: hash, url: url, name: name ? name : url, date: new Date(), username: Meteor.user().username },
+            (error) => {
+              if (error) {
+                swal('Error', error.message, 'error');
+              } else {
+                swal('Success', 'Password added successfully', 'success');
+                formRef.reset();
+              }
+            });
         }
-        return hash;
       });
     }
   }
 
-  submit(data, formRef) {
-    const { password, url, name } = data;
-    const hash = this.hashPassword(password);
-    if (hash) {
-      Password.collection.insert({ password: hash, url: url, name: name, date: new Date(), owner: Meteor.user().username },
-        (error) => {
-          if (error) {
-            swal('Error', error.message, 'error');
-          } else {
-            swal('Success', 'Password added successfully', 'success');
-            formRef.reset();
-          }
-        });
-    }
+  render() {
+    return (this.props.ready) ? this.renderPage() : <Loader active>Getting data</Loader>;
   }
 
-  render() {
+  renderPage() {
     let fRef = null;
     return (
       <Grid container centered>
@@ -165,8 +156,8 @@ class AddPassword extends React.Component {
           <Header as="h2" textAlign="center">Add Password</Header>
           <AutoForm ref={ref => { fRef = ref; }} schema={bridge} onSubmit={data => this.submit(data, fRef)} >
             <Segment>
-              <TextField name='password' placeholder='Password'/>
-              <TextField name='confirmPassword' placeholder='Confirm Password'/>
+              <TextField type='password' name='password' placeholder='Password'/>
+              <TextField type='password' name='confirmPassword' placeholder='Confirm Password'/>
               <TextField name='url' placeholder='URL'/>
               <TextField name='name' placeholder='Name for Password'/>
               <SubmitField value='Submit'/>
@@ -179,4 +170,17 @@ class AddPassword extends React.Component {
   }
 }
 
-export default AddPassword;
+AddPassword.propTypes = {
+  passwords: PropTypes.array.isRequired,
+  ready: PropTypes.bool.isRequired
+}
+
+export default withTracker(() => {
+  const subscription = Meteor.subscribe(Password.userPublicationName);
+  const ready = subscription.ready();
+  const passwords = Password.collection.find({}).fetch();
+  return {
+    passwords,
+    ready
+  };
+})(AddPassword);
