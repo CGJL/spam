@@ -38,15 +38,14 @@ class PasswordCollection {
         defaultValue: '',
       }
     }, { tracker: Tracker });
+    /*Attach schema to collection
+    so all items inserted to document is checked against schema. */
+    this.collection.attachSchema(this.schema);
 
-      /*Attach schema to collection
-      so all items inserted to document is checked against schema. */
-      this.collection.attachSchema(this.schema);
-
-      /*Still need to define names for publications and subscriptions.
-      i.e. this.userPublicationName = `${this.name}.publication.user`; */
-
-
+    /*Still need to define names for publications and subscriptions.
+    i.e. this.userPublicationName = `${this.name}.publication.user`; */
+    this.userPublicationName = `${this.name}.publication.user`;
+    this.adminPublicationName = `${this.name}.publication.admin`;
   }
 }
 
