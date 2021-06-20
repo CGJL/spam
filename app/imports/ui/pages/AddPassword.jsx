@@ -130,7 +130,7 @@ class AddPassword extends React.Component {
         if (hashError) {
           swal('Error', hashError.message, 'error');
         } else {
-          Password.collection.insert({ password: hash, url: url, name: name, date: new Date(), username: Meteor.user().username },
+          Password.collection.insert({ password: hash, url: url, name: name ? name : url, date: new Date(), username: Meteor.user().username },
             (error) => {
               if (error) {
                 swal('Error', error.message, 'error');
@@ -156,8 +156,8 @@ class AddPassword extends React.Component {
           <Header as="h2" textAlign="center">Add Password</Header>
           <AutoForm ref={ref => { fRef = ref; }} schema={bridge} onSubmit={data => this.submit(data, fRef)} >
             <Segment>
-              <TextField name='password' placeholder='Password'/>
-              <TextField name='confirmPassword' placeholder='Confirm Password'/>
+              <TextField type='password' name='password' placeholder='Password'/>
+              <TextField type='password' name='confirmPassword' placeholder='Confirm Password'/>
               <TextField name='url' placeholder='URL'/>
               <TextField name='name' placeholder='Name for Password'/>
               <SubmitField value='Submit'/>
