@@ -7,6 +7,7 @@
     "bcryptjs": "^2.4.3",
     "classnames": "^2.2.6",
     "core-js": "^3.9.0",
+    "crypto-js": "^4.0.0",
     "graphql": "^14.5.8",
     "iroh": "^0.3.0",
     "meteor-node-stubs": "^1.0.1",
