@@ -6,6 +6,7 @@ import Proptypes from 'prop-types';
 import { Passwords } from '../../api/password/Password';
 import PasswordItem from '../components/PasswordItem';
 
+/* Render Password Collection into a set of cards */
 class AllPasswords extends React.Component {
 
   render() {
@@ -35,10 +36,12 @@ AllPasswords.propTypes = {
 };
 
 export default withTracker(() => {
+
+  // ensuring minimongo is populated with all collections prior to running render()
   const sub2 = Meteor.subscribe(Passwords.userPublicationName);
 
   return {
-    passwords: Passwords.collection.fin({}).fetch(),
+    passwords: Passwords.collection.find({}).fetch(),
     ready: sub2.ready(),
   };
 })(AllPasswords);

@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Stuffs } from '../../api/stuff/Stuff.js';
-import { Password } from '../../api/password/Password.js';
+import { Passwords } from '../../api/password/Password.js';
 
 /* eslint-disable no-console */
 
@@ -20,10 +20,10 @@ if (Stuffs.collection.find().count() === 0) {
 
 function addPasswordData(data) {
   console.log(`  Adding: ${data.name} (${data.owner})`);
-  Password.collection.insert(data);
+  Passwords.collection.insert(data);
 }
 
-if (Password.collection.find().count() === 0) {
+if (Passwords.collection.find().count() === 0) {
   if (Meteor.settings.defaultData) {
     console.log('Creating default Password data.');
     Meteor.settings.defaultData[1].passwordData.map(data => addPasswordData(data));
