@@ -8,7 +8,7 @@ import { AutoForm, ErrorsField, SubmitField, TextField } from 'uniforms-semantic
 import SimpleSchema from 'simpl-schema';
 import swal from 'sweetalert';
 import iroh from 'iroh';
-import { Password } from '../../api/password/Password';
+import { Passwords } from '../../api/password/Password';
 import { CryptoUtil } from '../../api/encryption/CryptoUtil';
 import { EncryptionKey } from '../../api/encryption/EncryptionKey';
 
@@ -170,8 +170,8 @@ class AddPassword extends React.Component {
     const dataValid = passwordValid(password, this.props.passwords) && confirmPasswordValid(confirmPassword) && urlValid(url, password, this.props.passwords) && nameValid(name, password);
 
     if (dataValid) {
-      let encryptedPass = CryptoUtil.encryptPassword(password, EncryptionKey.findOne().key);
-      Password.collection.insert({ password: encryptedPass, url: url, name: name ? name : url, date: new Date(), username: Meteor.user().username, image: `${url}/favicon.ico` },
+      const encryptedPass = CryptoUtil.encryptPassword(password, EncryptionKey.findOne().key);
+      Passwords.collection.insert({ password: encryptedPass, url: url, name: name || url, date: new Date(), username: Meteor.user().username, image: `${url}/favicon.ico` },
         (error) => {
           if (error) {
             swal('Error', error.message, 'error');
@@ -215,9 +215,9 @@ AddPassword.propTypes = {
 };
 
 export default withTracker(() => {
-  const subscription = Meteor.subscribe(Password.userPublicationName);
+  const subscription = Meteor.subscribe(Passwords.userPublicationName);
   const ready = subscription.ready();
-  const passwords = Password.collection.find({}).fetch();
+  const passwords = Passwords.collection.find({}).fetch();
   return {
     passwords,
     ready,
