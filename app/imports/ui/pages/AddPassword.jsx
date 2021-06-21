@@ -86,7 +86,7 @@ const nameValid = (name, password) => {
 };
 
 const urlValid = (url, password, existingPasswords) => {
-  urlValidIroh();
+  //urlValidIroh();
   if (password !== null && url != null) {
     const existingMatches = existingPasswords
       ? existingPasswords.filter(existingPassword => existingPassword && url === existingPassword.url)
