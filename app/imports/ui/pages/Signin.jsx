@@ -32,9 +32,9 @@ export default class Signin extends React.Component {
       } else {
         // Clear local EncryptionKey MongoDB Collection
         EncryptionKey.remove({});
-        
+
         // Populate Collection using SHA512 hash of password as the encryption key
-        EncryptionKey.insert({key: CryptoUtil.generateKey(password)});
+        EncryptionKey.insert({ key: CryptoUtil.generateKey(password) });
 
         this.setState({ error: '', redirectToReferer: true });
       }

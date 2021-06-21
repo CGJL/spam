@@ -7,12 +7,15 @@ import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import { AutoForm, ErrorsField, SubmitField, TextField } from 'uniforms-semantic';
 import SimpleSchema from 'simpl-schema';
 import swal from 'sweetalert';
-import { Password } from '../../api/password/Password';
+import bcrypt from 'bcryptjs';
+import iroh from 'iroh';
+import { fetch } from 'meteor/fetch';
+import { Passwords } from '../../api/password/Password';
 import { CryptoUtil } from '../../api/encryption/CryptoUtil';
 import { EncryptionKey } from '../../api/encryption/EncryptionKey';
 
 const passwordValidIroh = () => {
-  let code = `
+  const code = `
     function passwordValid(password) {
       if (password !== null) {
         if (password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/) === null) {
@@ -25,15 +28,15 @@ const passwordValidIroh = () => {
     passwordValid('some non-null, invalid pwd...');
     passwordValid('Abc123!@#');
   `;
-  let stage = new Iroh.Stage(code);
-  stage.addListener(Iroh.FUNCTION).on('enter', function(e) {
-    console.log("argument: " + e.arguments[0]);
+  const stage = new Iroh.Stage(code);
+  stage.addListener(Iroh.FUNCTION).on('enter', function (e) {
+    console.log(`argument: ${e.arguments[0]}`);
   });
-  stage.addListener(Iroh.FUNCTION).on('return', function(e) {
-    console.log("return: " + e.return);
+  stage.addListener(Iroh.FUNCTION).on('return', function (e) {
+    console.log(`return: ${e.return}`);
   });
   eval(stage.script);
-}
+};
 
 const nameValid = (name, password) => {
   if (password !== null && name !== null) {
@@ -43,7 +46,7 @@ const nameValid = (name, password) => {
     }
   }
   return true;
-}
+};
 
 const urlValid = (url, password, existingPasswords) => {
   if (password !== null && url != null) {
@@ -51,29 +54,28 @@ const urlValid = (url, password, existingPasswords) => {
     if (password === url) {
       swal('Error', 'Password not added: The URL must not be the same as the password.', 'error');
       return false;
-    } else if (existingMatches.length > 0) {
+    } if (existingMatches.length > 0) {
       swal('Error', 'Password not added: The URL cannot be the same as an existing URL.', 'error');
       return false;
     }
   }
   return true;
-}
+};
 
 const passwordValid = (password, existingPasswords) => {
-  //passwordValidIroh();
+  // passwordValidIroh();
   if (password !== null) {
-    const existingMatches = existingPasswords.filter(existingPassword =>
-      password === Meteor.user().username || password === existingPassword.name || password === existingPassword.url);
+    const existingMatches = existingPasswords.filter(existingPassword => password === Meteor.user().username || password === existingPassword.name || password === existingPassword.url);
     if (password.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$/) === null) {
       swal('Error', 'Password not added: Password must be 8 - 20 characters long and have at least one uppercase letter, lowercase letter, number, and special character', 'error');
       return false;
-    } else if (existingMatches.length > 0) {
+    } if (existingMatches.length > 0) {
       swal('Error', 'Password not added: Password cannot be the same as your username or an existing URL or password name.', 'error');
       return false;
     }
   }
   return true;
-}
+};
 
 const confirmPasswordValid = (password, confirmPassword) => {
   if (password != null && confirmPassword != null) {
@@ -83,36 +85,36 @@ const confirmPasswordValid = (password, confirmPassword) => {
     }
   }
   return true;
-}
+};
 
 const formSchema = new SimpleSchema({
   password: {
     type: String,
     min: 8,
-    max: 20
+    max: 20,
   },
   confirmPassword: {
     type: String,
     min: 8,
-    max: 20
+    max: 20,
   },
   url: {
     type: String,
     min: 3,
-    max: 2048
+    max: 2048,
   },
   name: {
     type: String,
     required: false,
-    max: 20
-  }
+    max: 20,
+  },
 });
 
 formSchema.labels({
   password: 'Password',
   confirmPassword: 'Confirm Password',
   url: 'URL',
-  name: 'Name for Password'
+  name: 'Name for Password',
 });
 
 const bridge = new SimpleSchema2Bridge(formSchema);
@@ -125,8 +127,8 @@ class AddPassword extends React.Component {
     const dataValid = passwordValid(password, this.props.passwords) && confirmPasswordValid(confirmPassword) && urlValid(url, password, this.props.passwords) && nameValid(name, password);
 
     if (dataValid) {
-      let encryptedPass = CryptoUtil.encryptPassword(password, EncryptionKey.findOne().key);
-      Password.collection.insert({ password: encryptedPass, url: url, name: name ? name : url, date: new Date(), username: Meteor.user().username, image: `${url}/favicon.ico` },
+      const encryptedPass = CryptoUtil.encryptPassword(password, EncryptionKey.findOne().key);
+      Passwords.collection.insert({ password: encryptedPass, url: url, name: name || url, date: new Date(), username: Meteor.user().username, image: `${url}/favicon.ico` },
         (error) => {
           if (error) {
             swal('Error', error.message, 'error');
@@ -166,15 +168,15 @@ class AddPassword extends React.Component {
 
 AddPassword.propTypes = {
   passwords: PropTypes.array.isRequired,
-  ready: PropTypes.bool.isRequired
-}
+  ready: PropTypes.bool.isRequired,
+};
 
 export default withTracker(() => {
-  const subscription = Meteor.subscribe(Password.userPublicationName);
+  const subscription = Meteor.subscribe(Passwords.userPublicationName);
   const ready = subscription.ready();
-  const passwords = Password.collection.find({}).fetch();
+  const passwords = Passwords.collection.find({}).fetch();
   return {
     passwords,
-    ready
+    ready,
   };
 })(AddPassword);
