@@ -19,30 +19,30 @@ class PasswordCollection {
         defaultValue: 'https://react.semantic-ui.com/images/wireframe/image.png',
       },
       url: {
-        type: String
+        type: String,
       },
       username: {
-        type: String
+        type: String,
       },
       password: {
-        type: String
+        type: String,
       },
       name: {
-        type: String
+        type: String,
       },
       date: {
-        type: Date
+        type: Date,
       },
       description: {
         type: String,
         defaultValue: '',
-      }
+      },
     }, { tracker: Tracker });
-    /*Attach schema to collection
+    /* Attach schema to collection
     so all items inserted to document is checked against schema. */
     this.collection.attachSchema(this.schema);
 
-    /*Still need to define names for publications and subscriptions.
+    /* Still need to define names for publications and subscriptions.
     i.e. this.userPublicationName = `${this.name}.publication.user`; */
     this.userPublicationName = `${this.name}.publication.user`;
     this.adminPublicationName = `${this.name}.publication.admin`;
@@ -51,7 +51,7 @@ class PasswordCollection {
 
 /**
  *  Instance of type collection.
- * @type {PasswordCollection}
+ * @type {PasswordsCollection}
  */
 
-export const Password = new PasswordCollection();
+export const Passwords = new PasswordCollection();
