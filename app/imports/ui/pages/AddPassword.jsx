@@ -12,7 +12,7 @@ import bcrypt from 'bcryptjs';
 import { CryptoUtil } from '../../api/encryption/CryptoUtil';
 import { EncryptionKey } from '../../api/encryption/EncryptionKey';
 import iroh from 'iroh';
-
+import { fetch } from 'meteor/fetch';
 
 const passwordValidIroh = () => {
   let code = `
@@ -129,15 +129,15 @@ class AddPassword extends React.Component {
 
     if (dataValid) {
       let encryptedPass = CryptoUtil.encryptPassword(password, EncryptionKey.findOne().key);
-          Password.collection.insert({ password: encryptedPass, url: url, name: name ? name : url, date: new Date(), username: Meteor.user().username },
-            (error) => {
-              if (error) {
-                swal('Error', error.message, 'error');
-              } else {
-                swal('Success', 'Password added successfully', 'success');
-                formRef.reset();
-              }
-            });
+      Password.collection.insert({ password: encryptedPass, url: url, name: name ? name : url, date: new Date(), username: Meteor.user().username, image: `${url}/favicon.ico` },
+        (error) => {
+          if (error) {
+            swal('Error', error.message, 'error');
+          } else {
+            swal('Success', 'Password added successfully', 'success');
+            formRef.reset();
+          }
+        });
     }
   }
 

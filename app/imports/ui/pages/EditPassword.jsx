@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Loader, Header, Segment } from 'semantic-ui-react';
+import { Grid, Loader, Header, Segment, Image } from 'semantic-ui-react';
 import swal from 'sweetalert';
 import { AutoForm, ErrorsField, HiddenField, SubmitField, TextField } from 'uniforms-semantic';
 import { Meteor } from 'meteor/meteor';
@@ -17,8 +17,8 @@ class EditPassword extends React.Component {
   submit(data) {
     // TODO: Add database integration
     const { password, url, name, _id } = data;
-
-    Password.collection.update(_id, { $set: { password, url, name } }, (error) => (error ?
+    const image = `${url}/favicon.ico`;
+    Password.collection.update(_id, { $set: { password, url, name, image } }, (error) => (error ?
       swal('Error', error.message, 'error') :
       swal('Success', 'Password updated successfully', 'success')));
   }
@@ -34,6 +34,7 @@ class EditPassword extends React.Component {
       <Grid container centered>
         <Grid.Column>
           <Header as="h2" textAlign="center">Edit Password</Header>
+          <Image src={this.props.doc.image} size='small' centered/>
           <AutoForm schema={bridge} onSubmit={data => this.submit(data)} model={this.props.doc}>
             <Segment>
               <HiddenField name="username"/>
