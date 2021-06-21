@@ -1,14 +1,14 @@
 import React from 'react';
 import { Grid, Loader, Header, Segment } from 'semantic-ui-react';
 import swal from 'sweetalert';
-import { AutoForm, ErrorsField, HiddenField, NumField, SelectField, SubmitField, TextField } from 'uniforms-semantic';
+import { AutoForm, ErrorsField, HiddenField, SubmitField, TextField } from 'uniforms-semantic';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
-import { Stuffs } from '../../api/stuff/Stuff';
+import { Password } from '../../api/password/Password';
 
-const bridge = new SimpleSchema2Bridge(Stuffs.schema);
+const bridge = new SimpleSchema2Bridge(Password.schema);
 
 /** Renders the Page for editing a single document. */
 class EditPassword extends React.Component {
@@ -16,10 +16,11 @@ class EditPassword extends React.Component {
   // On successful submit, insert the data.
   submit(data) {
     // TODO: Add database integration
-    // const { password, comfirmPassword, url, name } = data;
-    // Stuffs.collection.update(_id, { $set: { name, quantity, condition } }, (error) => (error ?
-    //   swal('Error', error.message, 'error') :
-    //   swal('Success', 'Password updated successfully', 'success')));
+    const { password, url, name, _id } = data;
+
+    Password.collection.update(_id, { $set: { password, url, name } }, (error) => (error ?
+      swal('Error', error.message, 'error') :
+      swal('Success', 'Password updated successfully', 'success')));
   }
 
   // If the subscription(s) have been received, render the page, otherwise show a loading icon.
@@ -35,8 +36,8 @@ class EditPassword extends React.Component {
           <Header as="h2" textAlign="center">Edit Password</Header>
           <AutoForm schema={bridge} onSubmit={data => this.submit(data)} model={this.props.doc}>
             <Segment>
+              <HiddenField name="username"/>
               <TextField name='password'/>
-              <TextField name='confirmPassword'/>
               <TextField name='url'/>
               <TextField name='name'/>
               <SubmitField value='Submit'/>
@@ -59,16 +60,16 @@ EditPassword.propTypes = {
 // withTracker connects Meteor data to React components. https://guide.meteor.com/react.html#using-withTracker
 export default withTracker(({ match }) => {
   // TODO: Add database integration
-  // // Get the documentID from the URL field. See imports/ui/layouts/App.jsx for the route containing :_id.
-  // const documentId = match.params._id;
-  // // Get access to Stuff documents.
-  // const subscription = Meteor.subscribe(Stuffs.userPublicationName);
-  // // Determine if the subscription is ready
-  // const ready = subscription.ready();
-  // // Get the document
-  // const doc = Stuffs.collection.findOne(documentId);
-  // return {
-  //   doc,
-  //   ready,
-  // };
+  // Get the documentID from the URL field. See imports/ui/layouts/App.jsx for the route containing :_id.
+  const documentId = match.params._id;
+  // Get access to Stuff documents.
+  const subscription = Meteor.subscribe(Password.userPublicationName);
+  // Determine if the subscription is ready
+  const ready = subscription.ready();
+  // Get the document
+  const doc = Password.collection.findOne(documentId);
+  return {
+    doc,
+    ready,
+  };
 })(EditPassword);
