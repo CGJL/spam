@@ -8,11 +8,8 @@ import { AutoForm, ErrorsField, SubmitField, TextField } from 'uniforms-semantic
 import SimpleSchema from 'simpl-schema';
 import swal from 'sweetalert';
 import { Password } from '../../api/password/Password';
-import bcrypt from 'bcryptjs';
 import { CryptoUtil } from '../../api/encryption/CryptoUtil';
 import { EncryptionKey } from '../../api/encryption/EncryptionKey';
-import iroh from 'iroh';
-
 
 const passwordValidIroh = () => {
   let code = `
