@@ -1,8 +1,9 @@
 /** Class that simplifies encryption/decryption of passwords */
+import aes from "crypto-js/aes";
+import { enc } from "crypto-js/core";
+import sha512 from "crypto-js/sha512";
+
 class SimpleCrypto {
-  constructor() {
-    this.CryptoJS = require('crypto-js');
-  }
 
   /**
    * Encrypts password with given key
@@ -11,7 +12,7 @@ class SimpleCrypto {
    * @returns {string} The decrypted version of param password
    */
   encryptPassword(password, encryptionKey) {
-    return this.CryptoJS.AES.encrypt(password, encryptionKey).toString();
+    return aes.encrypt(password, encryptionKey).toString();
   }
 
   /**
@@ -21,7 +22,7 @@ class SimpleCrypto {
    * @returns {string} The original decrypted version of param password
    */
   decryptPassword(password, encryptionKey) {
-    return this.CryptoJS.AES.decrypt(password, encryptionKey).toString(this.CryptoJS.enc.Utf8);
+    return aes.decrypt(password, encryptionKey).toString(enc.Utf8);
   }
 
   /**
@@ -30,7 +31,7 @@ class SimpleCrypto {
    * @returns {string} Key derived from param masterPassword
    */
   generateKey(masterPassword) {
-    return this.CryptoJS.SHA512(masterPassword).toString();
+    return sha512(masterPassword).toString();
   }
 }
 
