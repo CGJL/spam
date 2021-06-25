@@ -31,7 +31,7 @@ class PasswordGenerator {
     let allowedLength = allowed.length;
     let pass = '';
     for (let i = 0; i < length; i++) {
-      pass += allowed[this.getRandomInt(0, allowedLength)];
+      pass += allowed[this.getRandomInt(0, allowedLength - 1)];
     }
     return pass;
   }
