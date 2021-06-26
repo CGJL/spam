@@ -85,13 +85,14 @@ class EditPassword extends React.Component {
       <Grid container centered>
         <Grid.Column>
           <Header as="h2" textAlign="center">Edit Password</Header>
-          <Image src={this.props.doc.image} size='small' centered/>
+          <Image src={this.props.doc.image} style={{ paddingBottom: "15px" }} size='small' centered/>
           <AutoForm schema={bridge} onSubmit={data => this.submit(data)} model={this.props.doc}>
             <Segment>
-              <HiddenField name="username"/>
+              <TextField name="username"/>
               <TextField name='password'/>
-              <TextField name='url'/>
               <TextField name='name'/>
+              <TextField name='url'/>
+              <TextField name='description'/>
               <SubmitField value='Submit'/>
               <ErrorsField/>
             </Segment>
