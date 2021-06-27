@@ -4,14 +4,10 @@
     { "email": "john@foo.com", "password": "changeme" }
   ],
 
-  "defaultData": [
-    {
-      "passwordData": [
-        { "password": "encryptedpassword1", "url": "abcd.com", "username": "username1", "name": "mypassword1", "date": "2016-05-18T16:00:00Z", "owner": "admin@foo.com" },
-        { "password": "encryptedpassword2", "url": "efgh.com", "username": "username2", "name": "mypassword2", "date": "2016-05-18T16:00:00Z", "owner": "admin@foo.com" },
-        { "password": "encryptedpassword3", "url": "ijkl.com", "username": "username3", "name": "mypassword3", "date": "2016-05-18T16:00:00Z", "owner": "john@foo.com" },
-        { "password": "encryptedpassword4", "url": "mnop.com", "username": "username4", "name": "mypassword4", "date": "2016-05-18T16:00:00Z", "owner": "john@foo.com" }
-      ]
-    }
+  "defaultPasswords": [
+    { "password": "encryptedpassword1", "url": "abcd.com", "username": "username1", "name": "mypassword1", "date": "2016-05-18T16:00:00Z", "owner": "admin@foo.com" },
+    { "password": "encryptedpassword2", "url": "efgh.com", "username": "username2", "name": "mypassword2", "date": "2016-05-18T16:00:00Z", "owner": "admin@foo.com" },
+    { "password": "encryptedpassword3", "url": "ijkl.com", "username": "username3", "name": "mypassword3", "date": "2016-05-18T16:00:00Z", "owner": "john@foo.com" },
+    { "password": "encryptedpassword4", "url": "mnop.com", "username": "username4", "name": "mypassword4", "date": "2016-05-18T16:00:00Z", "owner": "john@foo.com" }
   ]
 }
