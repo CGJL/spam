@@ -10,6 +10,7 @@ import iroh from 'iroh';
 import { Passwords } from '../../api/password/Password';
 import { CryptoUtil } from '../../api/encryption/CryptoUtil';
 import { EncryptionKey } from '../../api/encryption/EncryptionKey';
+import { PassGen } from '../../api/password/PasswordGenerator';
 
 const passwordValidIroh = () => {
   const code = `
@@ -183,6 +184,13 @@ class AddPassword extends React.Component {
     document.getElementById('visibilityToggle').innerText = passwordVisibility === 'password' ? 'Hide Password' : 'Un-hide Password';
   };
 
+  generatePassword = (event) => {
+    event.preventDefault();
+    let pass = PassGen.getRandomPassword(16);
+    document.getElementById('password').value = pass;
+    document.getElementById('confirmPassword').value = pass;
+  };
+
   render() {
     return (this.props.ready) ? this.renderPage() : <Loader active>Getting data</Loader>;
   }
@@ -197,6 +205,7 @@ class AddPassword extends React.Component {
           <AutoForm ref={ref => { fRef = ref; }} schema={bridge} onSubmit={data => this.submit(data, fRef)} >
             <Segment>
               <Button id='visibilityToggle' size='small' floated='right' toggle onClick={this.handleToggleClick}>Un-hide Password</Button>
+              <Button size='small' floated='right' onClick={this.generatePassword}>Generate Password</Button>
               <br/>
               <TextField name='username' placeholder='Username'/>
               <TextField id='password' type='password' name='password' placeholder='Password'/>
