@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Loader, Header, Segment, Image } from 'semantic-ui-react';
+import { Grid, Loader, Header, Segment, Image, Button } from 'semantic-ui-react';
 import swal from 'sweetalert';
 import { AutoForm, ErrorsField, HiddenField, SubmitField, TextField } from 'uniforms-semantic';
 import { Meteor } from 'meteor/meteor';
@@ -59,20 +59,28 @@ const nameValid = function(name, password) {
 class EditPassword extends React.Component {
   // On successful submit, insert the data.
   submit(data) {
-    const { password, url, name, _id } = data;
-    const dataValid = passwordValid(password, this.props.passwords) && urlValid(url, password, this.props.passwords) && nameValid(name, password);
+    const { password, url, name, username, description, _id } = data;
+    const dataValid = passwordValid(password, this.props.passwords) && nameValid(name, password);
+    const encryptedPass = CryptoUtil.encryptPassword(password, EncryptionKey.findOne().key);
     if (dataValid) {
       const image = `${url}/favicon.ico`;
-      Passwords.collection.update(_id, { $set: { password, url, name, image } }, (error) => (error ?
+      Passwords.collection.update(_id, { $set: { password: encryptedPass, url, name: name || url, username, description, image } }, (error) => (error ?
         swal('Error', error.message, 'error') :
         swal('Success', 'Password updated successfully', 'success')));
     }
   }
 
+  handleToggleClick = (event) => {
+    event.preventDefault();
+    const passwordVisibility = document.getElementById('password').getAttribute('type');
+    document.getElementById('password').setAttribute('type', passwordVisibility === 'password' ? '' : 'password');
+    document.getElementById('visibilityToggle').innerText = passwordVisibility === 'password' ? 'Hide Password' : 'Un-hide Password';
+  };
+
   // If the subscription(s) have been received, render the page, otherwise show a loading icon.
   render() {
     if (this.props.ready && this.props.encryptionKey) {
-      CryptoUtil.decryptPassword(this.props.doc.password, this.props.encryptionKey);
+      this.props.doc.password = CryptoUtil.decryptPassword(this.props.doc.password, this.props.encryptionKey);
       return this.renderPage();
     } else {
       return <Loader active>Getting data</Loader>;
@@ -88,11 +96,13 @@ class EditPassword extends React.Component {
           <Image src={this.props.doc.image} style={{ paddingBottom: "15px" }} size='small' centered/>
           <AutoForm schema={bridge} onSubmit={data => this.submit(data)} model={this.props.doc}>
             <Segment>
-              <TextField name="username"/>
-              <TextField name='password'/>
-              <TextField name='name'/>
-              <TextField name='url'/>
-              <TextField name='description'/>
+              <Button id='visibilityToggle' size='small' floated='right' toggle onClick={this.handleToggleClick}>Un-hide Password</Button>
+              <br/>
+              <TextField name='username' placeholder='Username'/>
+              <TextField id='password' type='password' name='password' placeholder='Password'/>
+              <TextField name='url' placeholder='URL'/>
+              <TextField name='name' placeholder='Name for Password'/>
+              <TextField name='description' placeholder='Description for Password'/>
               <SubmitField value='Submit'/>
               <ErrorsField/>
             </Segment>
