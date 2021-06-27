@@ -2,10 +2,9 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
-import { Grid, Header, Loader, Segment } from 'semantic-ui-react';
+import { Grid, Header, Loader, Segment, Button } from 'semantic-ui-react';
 import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import { AutoForm, ErrorsField, SubmitField, TextField } from 'uniforms-semantic';
-import SimpleSchema from 'simpl-schema';
 import swal from 'sweetalert';
 import iroh from 'iroh';
 import { Passwords } from '../../api/password/Password';
@@ -86,7 +85,7 @@ const nameValid = (name, password) => {
 };
 
 const urlValid = (url, password, existingPasswords) => {
-  //urlValidIroh();
+  // urlValidIroh();
   if (password !== null && url != null) {
     const existingMatches = existingPasswords
       ? existingPasswords.filter(existingPassword => existingPassword && url === existingPassword.url)
@@ -96,6 +95,16 @@ const urlValid = (url, password, existingPasswords) => {
       return false;
     } if (existingMatches.length > 0) {
       swal('Error', 'Password not added: The URL cannot be the same as an existing URL.', 'error');
+      return false;
+    }
+  }
+  return true;
+};
+
+const usernameValid = (username, password) => {
+  if (password !== null && username != null) {
+    if (password === username) {
+      swal('Error', 'Password not added: The username must not be the same as the password.', 'error');
       return false;
     }
   }
@@ -130,58 +139,49 @@ const confirmPasswordValid = (password, confirmPassword) => {
   return true;
 };
 
-const formSchema = new SimpleSchema({
-  password: {
-    type: String,
-    min: 8,
-    max: 20,
-  },
-  confirmPassword: {
-    type: String,
-    min: 8,
-    max: 20,
-  },
-  url: {
-    type: String,
-    min: 3,
-    max: 2048,
-  },
-  name: {
-    type: String,
-    required: false,
-    max: 20,
-  },
-});
-
-formSchema.labels({
-  password: 'Password',
-  confirmPassword: 'Confirm Password',
-  url: 'URL',
-  name: 'Name for Password',
-});
-
-const bridge = new SimpleSchema2Bridge(formSchema);
+const bridge = new SimpleSchema2Bridge(Passwords.schema);
 
 class AddPassword extends React.Component {
 
   submit(data, formRef) {
-    const { password, confirmPassword, url, name } = data;
+    const { password, confirmPassword, url, name, username, description } = data;
 
-    const dataValid = passwordValid(password, this.props.passwords) && confirmPasswordValid(confirmPassword) && urlValid(url, password, this.props.passwords) && nameValid(name, password);
+    const dataValid = passwordValid(password, this.props.passwords)
+      && confirmPasswordValid(confirmPassword)
+      && urlValid(url, password, this.props.passwords)
+      && nameValid(name, password)
+      && usernameValid(username, password);
 
     if (dataValid) {
       const encryptedPass = CryptoUtil.encryptPassword(password, EncryptionKey.findOne().key);
-      Passwords.collection.insert({ password: encryptedPass, url: url, name: name || url, date: new Date(), username: Meteor.user().username, image: `${url}/favicon.ico` },
-        (error) => {
-          if (error) {
-            swal('Error', error.message, 'error');
-          } else {
-            swal('Success', 'Password added successfully', 'success');
-            formRef.reset();
-          }
-        });
+      Passwords.collection.insert({
+        password: encryptedPass,
+        url: url,
+        name: name || url,
+        username: username,
+        description: description,
+        image: `${url}/favicon.ico`,
+        owner: Meteor.user().username,
+      },
+      (error) => {
+        if (error) {
+          swal('Error', error.message, 'error');
+        } else {
+          swal('Success', 'Password added successfully', 'success');
+          formRef.reset();
+        }
+      });
     }
   }
+
+  handleToggleClick = (event) => {
+    event.preventDefault();
+    const passwordVisibility = document.getElementById('password').getAttribute('type');
+    const confirmPasswordVisibility = document.getElementById('confirmPassword').getAttribute('type');
+    document.getElementById('password').setAttribute('type', passwordVisibility === 'password' ? '' : 'password');
+    document.getElementById('confirmPassword').setAttribute('type', confirmPasswordVisibility === 'password' ? '' : 'password');
+    document.getElementById('visibilityToggle').innerText = passwordVisibility === 'password' ? 'Hide Password' : 'Un-hide Password';
+  };
 
   render() {
     return (this.props.ready) ? this.renderPage() : <Loader active>Getting data</Loader>;
@@ -195,10 +195,14 @@ class AddPassword extends React.Component {
           <Header as="h2" textAlign="center">Add Password</Header>
           <AutoForm ref={ref => { fRef = ref; }} schema={bridge} onSubmit={data => this.submit(data, fRef)} >
             <Segment>
-              <TextField type='password' name='password' placeholder='Password'/>
-              <TextField type='password' name='confirmPassword' placeholder='Confirm Password'/>
+              <Button id='visibilityToggle' size='small' floated='right' toggle onClick={this.handleToggleClick}>Un-hide Password</Button>
+              <br/>
+              <TextField name='username' placeholder='Username'/>
+              <TextField id='password' type='password' name='password' placeholder='Password'/>
+              <TextField id='confirmPassword' type='password' name='confirmPassword' placeholder='Confirm Password'/>
               <TextField name='url' placeholder='URL'/>
               <TextField name='name' placeholder='Name for Password'/>
+              <TextField name='description' placeholder='Description for Password'/>
               <SubmitField value='Submit'/>
               <ErrorsField/>
             </Segment>
