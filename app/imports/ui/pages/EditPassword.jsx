@@ -9,6 +9,7 @@ import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import { Passwords } from '../../api/password/Password';
 import { EncryptionKey } from '../../api/encryption/EncryptionKey';
 import { CryptoUtil } from '../../api/encryption/CryptoUtil';
+import FaviconPreview from '../components/FaviconPreview';
 
 const bridge = new SimpleSchema2Bridge(Passwords.schema);
 
@@ -93,7 +94,7 @@ class EditPassword extends React.Component {
       <Grid container centered>
         <Grid.Column>
           <Header as="h2" textAlign="center">Edit Password</Header>
-          <Image src={this.props.doc.image} style={{ paddingBottom: "15px" }} size='small' centered/>
+          <FaviconPreview url={this.props.doc.url}/>
           <AutoForm schema={bridge} onSubmit={data => this.submit(data)} model={this.props.doc}>
             <Segment>
               <Button id='visibilityToggle' size='small' floated='right' toggle onClick={this.handleToggleClick}>Un-hide Password</Button>
