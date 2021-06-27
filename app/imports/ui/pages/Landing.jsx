@@ -1,5 +1,8 @@
 import React from 'react';
-import { Grid, Image } from 'semantic-ui-react';
+import { Grid, Image, Button, Menu } from 'semantic-ui-react';
+import { withTracker } from 'meteor/react-meteor-data';
+import PropTypes from 'prop-types';
+import { withRouter, NavLink } from 'react-router-dom';
 
 /** A simple static component to render some text for the landing page. */
 class Landing extends React.Component {
@@ -8,12 +11,26 @@ class Landing extends React.Component {
       <Grid id='landing-page' verticalAlign='middle' textAlign='center' container>
 
         <Grid.Column width={4}>
-          <Image size='small' circular src="/images/meteor-logo.png"/>
+          <Image size='small' src="/images/spam-landing-lock.png"/>
         </Grid.Column>
 
-        <Grid.Column width={8}>
-          <h1>Welcome to this template</h1>
-          <p>Now get to work and modify this app!</p>
+        <Grid.Column width={10}>
+          <h1>Welcome to Simple Password Account Manager (SPAM)</h1>
+          <p>Store and track your passwords in one place.</p>
+        </Grid.Column>
+
+        <Grid.Column width={14}>
+          {
+            this.props.currentUser
+              ? ([
+                  <Button key='add' as={NavLink} activeClassName="" exact to="/add">Add Password</Button>,
+                  <Button key='view' as={NavLink} activeClassName="" exact to="/all-passwords">View Passwords</Button>
+                ])
+              : ([
+                  <Button key='login' as={NavLink} activeClassName="" exact to="/signin">Login</Button>,
+                  <Button key='register' as={NavLink} activeClassName="" exact to="/signup">Register</Button>
+                ])
+          }
         </Grid.Column>
 
       </Grid>
@@ -21,4 +38,13 @@ class Landing extends React.Component {
   }
 }
 
-export default Landing;
+Landing.propTypes = {
+  currentUser: PropTypes.string,
+};
+
+const LandingPage = withTracker(() => ({
+  currentUser: Meteor.user() ? Meteor.user().username : '',
+}))(Landing);
+
+export default withRouter(LandingPage);
+

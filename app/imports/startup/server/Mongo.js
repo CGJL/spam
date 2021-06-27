@@ -20,7 +20,7 @@ if (Passwords.collection.find().count() === 0) {
 
     console.log('Creating default Password data.');
 
-    Meteor.settings.defaultData[1].passwordData.map(data => {
+    Meteor.settings.defaultData[0].passwordData.map(data => {
       // Encrypt the default passwords if they belong to a known default account
       if (passwordDict[data.username]) {
         let plain = data.password;
