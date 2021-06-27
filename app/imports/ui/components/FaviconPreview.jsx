@@ -12,7 +12,7 @@ class FaviconPreview extends React.Component {
 
     const imgSrc = `https://www.google.com/s2/favicons?sz=64&domain_url=${domain}`;
     return (
-      <Image src={imgSrc} floated={this.props.card ? 'right' : ''} size={this.props.card ? 'mini' : 'small'} centered={!this.props.card}/>
+      <Image src={imgSrc} floated={this.props.card ? 'right' : null} size={this.props.card ? 'mini' : 'small'} centered={!this.props.card}/>
     );
   }
 }
