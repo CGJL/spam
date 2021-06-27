@@ -6,7 +6,7 @@ import { Tracker } from 'meteor/tracker';
 const EncryptionKey = new Mongo.Collection(null);
 
 const EncryptionKeySchema = new SimpleSchema({
-	key: String
+  key: String,
 }, { tracker: Tracker });
 
 EncryptionKey.attachSchema(EncryptionKeySchema);

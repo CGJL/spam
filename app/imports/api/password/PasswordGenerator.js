@@ -1,16 +1,16 @@
 /** Class that generates a random password */
 class PasswordGenerator {
   constructor() {
-    
+
   }
 
   /**
-   * 
-   * @param {Number} min Minimum integer value (inclusive) to be generated. 
-   * @param {Number} max Maximum integer value (inclusive) to be generated. 
+   *
+   * @param {Number} min Minimum integer value (inclusive) to be generated.
+   * @param {Number} max Maximum integer value (inclusive) to be generated.
    * @returns Any integer between min and max inclusive
    */
-   getRandomInt(min, max) {
+  getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max) + 1;
     return Math.floor(Math.random() * (max - min) + min);
@@ -22,13 +22,13 @@ class PasswordGenerator {
    */
   getRandomPassword(length) {
     length = Math.floor(length);
-    let lowerAlphas = 'abcdefghijklmnopqrstuvwxyz';
-    let upperAlphas = lowerAlphas.toUpperCase();
-    let numbers = '1234567890';
-    let symbols = '!@#$%^&*()=+-_[]{}<>/.,';
-    
-    let allowed = lowerAlphas + upperAlphas + numbers + symbols;
-    let allowedLength = allowed.length;
+    const lowerAlphas = 'abcdefghijklmnopqrstuvwxyz';
+    const upperAlphas = lowerAlphas.toUpperCase();
+    const numbers = '1234567890';
+    const symbols = '!@#$%^&*()=+-_[]{}<>/.,';
+
+    const allowed = lowerAlphas + upperAlphas + numbers + symbols;
+    const allowedLength = allowed.length;
     let pass = '';
     for (let i = 0; i < length; i++) {
       pass += allowed[this.getRandomInt(0, allowedLength - 1)];

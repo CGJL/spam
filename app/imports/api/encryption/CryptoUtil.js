@@ -1,7 +1,9 @@
 /** Class that simplifies encryption/decryption of passwords */
 class SimpleCrypto {
   constructor() {
+    /* eslint-disable global-require */
     this.CryptoJS = require('crypto-js');
+    /* eslint-enable global-require */
   }
 
   /**

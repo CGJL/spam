@@ -1,8 +1,9 @@
 import React from 'react';
-import { Grid, Image, Button, Menu } from 'semantic-ui-react';
+import { Grid, Image, Button } from 'semantic-ui-react';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import { withRouter, NavLink } from 'react-router-dom';
+import { Meteor } from 'meteor/meteor';
 
 /** A simple static component to render some text for the landing page. */
 class Landing extends React.Component {
@@ -23,13 +24,13 @@ class Landing extends React.Component {
           {
             this.props.currentUser
               ? ([
-                  <Button key='add' as={NavLink} activeClassName="" exact to="/add">Add Password</Button>,
-                  <Button key='view' as={NavLink} activeClassName="" exact to="/all-passwords">View Passwords</Button>
-                ])
+                <Button key='add' as={NavLink} activeClassName="" exact to="/add">Add Password</Button>,
+                <Button key='view' as={NavLink} activeClassName="" exact to="/all-passwords">View Passwords</Button>,
+              ])
               : ([
-                  <Button key='login' as={NavLink} activeClassName="" exact to="/signin">Login</Button>,
-                  <Button key='register' as={NavLink} activeClassName="" exact to="/signup">Register</Button>
-                ])
+                <Button key='login' as={NavLink} activeClassName="" exact to="/signin">Login</Button>,
+                <Button key='register' as={NavLink} activeClassName="" exact to="/signup">Register</Button>,
+              ])
           }
         </Grid.Column>
 
@@ -47,4 +48,3 @@ const LandingPage = withTracker(() => ({
 }))(Landing);
 
 export default withRouter(LandingPage);
-
