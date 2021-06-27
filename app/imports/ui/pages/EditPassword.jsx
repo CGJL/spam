@@ -155,7 +155,7 @@ export default withTracker(({ match }) => {
   const ready = subscription.ready();
   // Get the document
   const doc = Passwords.collection.findOne(documentId);
-  const passwords = Passwords.collection.find({}).fetch();
+  const passwords = Passwords.collection.find({}).fetch().filter(password => password._id !== documentId);
   const encryptionKey = EncryptionKey.findOne({}).key;
   return {
     doc,
