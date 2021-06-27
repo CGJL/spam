@@ -12,7 +12,7 @@ class FaviconPreview extends React.Component {
 
     const imgSrc = `https://www.google.com/s2/favicons?sz=64&domain_url=${domain}`;
     return (
-      <Image src={imgSrc} width="64px" height="64px"/>
+        <Image src={imgSrc} floated={this.props.card ? "right" : ""} size={this.props.card ? "mini" : "small"} centered={this.props.card ? false : true}/>
     );
   }
 }
@@ -20,6 +20,7 @@ class FaviconPreview extends React.Component {
 /** Require a document to be passed to this component. */
 FaviconPreview.propTypes = {
   url: PropTypes.string.isRequired,
+  card: PropTypes.bool,
 };
 
 /** Wrap this component in withRouter since we use the <Link> React Router element. */

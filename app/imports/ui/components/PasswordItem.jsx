@@ -1,7 +1,9 @@
 import React from 'react';
 import { Card, Icon, Accordion, Button } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router';
+import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
+import FaviconPreview from './FaviconPreview';
 
 // Render single row in the List stuff table
 class PasswordItem extends React.Component {
@@ -20,12 +22,13 @@ class PasswordItem extends React.Component {
   render() {
     const passwordInfo = this.props.password;
     const { activeIndex } = this.state;
+    const description = passwordInfo.description ? <div>{passwordInfo.description}<br/></div> : '';
     return (
       <Card color="red">
         <Card.Content>
+          <FaviconPreview url={passwordInfo.image} card/>
           <Card.Header>{passwordInfo.name}</Card.Header>
-          <Card.Meta>{passwordInfo.username}</Card.Meta>s
-          <Card.Meta>{passwordInfo.password}</Card.Meta>
+          <Card.Meta>{passwordInfo.username}</Card.Meta>
           <Card.Meta>
             <Accordion>
               <Accordion.Title
@@ -36,14 +39,14 @@ class PasswordItem extends React.Component {
                 Click to view More Information
               </Accordion.Title>
               <Accordion.Content active={activeIndex === 0}>
-                {passwordInfo.description}
+                {description}
                 <a href={passwordInfo.url}>{passwordInfo.url}</a>
               </Accordion.Content>
             </Accordion>
           </Card.Meta>
         </Card.Content>
         <Card.Content extra>
-          <Link to={'/edit'}><Button inverted color={'red'}>Edit</Button></Link>
+          <Button as={Link} to={`/edit/${passwordInfo._id}`} inverted color={'red'}>Edit</Button>
         </Card.Content>
       </Card>
     );
