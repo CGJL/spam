@@ -10,7 +10,7 @@ import PasswordItem from '../components/PasswordItem';
 class AllPasswords extends React.Component {
 
   state = {
-    searchInput: ''
+    searchInput: '',
   };
 
   setSearchValue(event) {
@@ -18,10 +18,8 @@ class AllPasswords extends React.Component {
   }
 
   filterPasswords() {
-    return this.props.passwords.filter((password) => 
-      password.name.toLowerCase().indexOf(this.state.searchInput.toLowerCase()) !== -1 ||
-      password.url.toLowerCase().indexOf(this.state.searchInput.toLowerCase()) !== -1
-    );
+    return this.props.passwords.filter((password) => password.name.toLowerCase().indexOf(this.state.searchInput.toLowerCase()) !== -1 ||
+      password.url.toLowerCase().indexOf(this.state.searchInput.toLowerCase()) !== -1);
   }
 
   render() {
