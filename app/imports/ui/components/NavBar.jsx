@@ -14,10 +14,12 @@ class NavBar extends React.Component {
       <Menu style={menuStyle} attached="top" borderless inverted>
         <Menu.Item as={NavLink} activeClassName="" exact to="/">
           <table>
-            <tr>
-              <td><Image src="/images/spam-landing-lock.png" style={{ width: '2vw' }}/></td>
-              <td><Header inverted as='h1'>Simple Password Account Manager</Header></td>
-            </tr>
+            <tbody>
+              <tr>
+                <td><Image src="/images/spam-landing-lock.png" style={{ width: '2vw' }}/></td>
+                <td><Header inverted as='h1'>Simple Password Account Manager</Header></td>
+              </tr>
+            </tbody>
           </table>
         </Menu.Item>
         {this.props.currentUser ? (
