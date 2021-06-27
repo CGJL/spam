@@ -77,7 +77,7 @@ class PasswordCollection {
 
 /**
  *  Instance of type collection.
- * @type {PasswordsCollection}
+ * @type {PasswordCollection}
  */
 
 export const Passwords = new PasswordCollection();

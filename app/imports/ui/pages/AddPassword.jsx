@@ -189,6 +189,7 @@ class AddPassword extends React.Component {
 
   renderPage() {
     let fRef = null;
+
     return (
       <Grid container centered>
         <Grid.Column>
