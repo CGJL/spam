@@ -146,6 +146,16 @@ const confirmPasswordValid = (password, confirmPassword) => {
 const bridge = new SimpleSchema2Bridge(Passwords.schema);
 
 class AddPassword extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      passwordVisibility: 'password',
+      confirmPasswordVisibility: 'password',
+      visibilityToggleLabel: 'Un-hide Password',
+      password: '',
+      confirmPassword: ''
+    };
+  }
 
   submit(data, formRef) {
     const { password, confirmPassword, url, name, username, description } = data;
@@ -180,30 +190,28 @@ class AddPassword extends React.Component {
 
   handleToggleClick = (event) => {
     event.preventDefault();
-    // eslint-disable-next-line no-undef
-    const passwordVisibility = document.getElementById('password').getAttribute('type');
-    // eslint-disable-next-line no-undef
-    const confirmPasswordVisibility = document.getElementById('confirmPassword').getAttribute('type');
-    // eslint-disable-next-line no-undef
-    document.getElementById('password').setAttribute('type', passwordVisibility === 'password' ? '' : 'password');
-    // eslint-disable-next-line no-undef
-    document.getElementById('confirmPassword').setAttribute('type', confirmPasswordVisibility === 'password' ? '' : 'password');
-    // eslint-disable-next-line no-undef
-    document.getElementById('visibilityToggle').innerText = passwordVisibility === 'password' ? 'Hide Password' : 'Un-hide Password';
+    this.setState({ passwordVisibility: this.state.passwordVisibility === 'password' ? '' : 'password' });
+    this.setState({ confirmPasswordVisibility: this.state.confirmPasswordVisibility === 'password' ? '' : 'password' });
+    this.setState({ visibilityToggleLabel: this.state.passwordVisibility === 'password' ? 'Hide Password' : 'Un-hide Password' });
   };
 
   generatePassword = (event) => {
     event.preventDefault();
     const pass = PassGen.getRandomPassword(16);
-    // eslint-disable-next-line no-undef
-    document.getElementById('password').value = pass;
-    // eslint-disable-next-line no-undef
-    document.getElementById('password').setAttribute('value', pass);
-    // eslint-disable-next-line no-undef
-    document.getElementById('confirmPassword').value = pass;
-    // eslint-disable-next-line no-undef
-    document.getElementById('confirmPassword').setAttribute('value', pass);
+    this.setState({
+      password: pass,
+      confirmPassword: pass
+    });
   };
+
+  handleChange = (field, value) => {
+    if (field == 'password') {
+      this.setState({ password: value });
+    } else if (field == 'confirmPassword') {
+      this.setState({ confirmPassword: value });
+    }
+  };
+
 
   render() {
     return (this.props.ready) ? this.renderPage() : <Loader active>Getting data</Loader>;
@@ -211,19 +219,19 @@ class AddPassword extends React.Component {
 
   renderPage() {
     let fRef = null;
-
     return (
       <Grid container centered>
         <Grid.Column>
           <Header as="h2" textAlign="center">Add Password</Header>
-          <AutoForm ref={ref => { fRef = ref; }} schema={bridge} onSubmit={data => this.submit(data, fRef)} >
+          <AutoForm ref={ref => { fRef = ref; }} schema={bridge} onSubmit={data => this.submit(data, fRef)} 
+            onChange={this.handleChange.bind(this)}>
             <Segment>
-              <Button id='visibilityToggle' size='small' floated='right' toggle onClick={this.handleToggleClick}>Un-hide Password</Button>
+              <Button id='visibilityToggle' size='small' floated='right' toggle onClick={this.handleToggleClick} content={this.state.visibilityToggleLabel}/>
               <Button size='small' floated='right' onClick={this.generatePassword}>Generate Password</Button>
               <br/>
               <TextField name='username' placeholder='Username'/>
-              <TextField id='password' type='password' name='password' placeholder='Password'/>
-              <TextField id='confirmPassword' type='password' name='confirmPassword' placeholder='Confirm Password'/>
+              <TextField type={this.state.passwordVisibility} name='password' placeholder='Password' value={this.state.password}/>
+              <TextField type={this.state.confirmPasswordVisibility} name='confirmPassword' placeholder='Confirm Password' value={this.state.confirmPassword}/>
               <TextField name='url' placeholder='URL'/>
               <TextField name='name' placeholder='Name for Password'/>
               <TextField name='description' placeholder='Description for Password'/>
