@@ -69,14 +69,6 @@ const usernameValid = (username, password) => {
 /** Renders the Page for editing a single document. */
 class EditPassword extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      passwordVisibility: 'password',
-      visibilityToggleLabel: 'Un-hide Password',
-    };
-  }
-
   // On successful submit, insert the data.
   submit(data) {
     const { password, url, name, username, description, _id } = data;
@@ -95,9 +87,12 @@ class EditPassword extends React.Component {
 
   handleToggleClick = (event) => {
     event.preventDefault();
-    this.setState({ passwordVisibility: this.state.passwordVisibility === 'password' ? '' : 'password' });
-    this.setState({ confirmPasswordVisibility: this.state.confirmPasswordVisibility === 'password' ? '' : 'password' });
-    this.setState({ visibilityToggleLabel: this.state.passwordVisibility === 'password' ? 'Hide Password' : 'Un-hide Password' });
+    // eslint-disable-next-line no-undef
+    const passwordVisibility = document.getElementById('password').getAttribute('type');
+    // eslint-disable-next-line no-undef
+    document.getElementById('password').setAttribute('type', passwordVisibility === 'password' ? '' : 'password');
+    // eslint-disable-next-line no-undef
+    document.getElementById('visibilityToggle').innerText = passwordVisibility === 'password' ? 'Hide Password' : 'Un-hide Password';
   };
 
   // If the subscription(s) have been received, render the page, otherwise show a loading icon.
@@ -119,10 +114,10 @@ class EditPassword extends React.Component {
           <FaviconPreview url={this.props.doc.url}/>
           <AutoForm schema={bridge} onSubmit={data => this.submit(data)} model={this.props.doc}>
             <Segment>
-              <Button size='small' floated='right' toggle onClick={this.handleToggleClick} content={this.state.visibilityToggleLabel}/>
+              <Button id='visibilityToggle' size='small' floated='right' toggle onClick={this.handleToggleClick}>Un-hide Password</Button>
               <br/>
               <TextField name='username' placeholder='Username'/>
-              <TextField type={this.state.passwordVisibility} name='password' placeholder='Password'/>
+              <TextField id='password' type='password' name='password' placeholder='Password'/>
               <TextField name='url' placeholder='URL'/>
               <TextField name='name' placeholder='Name for Password'/>
               <TextField name='description' placeholder='Description for Password'/>
