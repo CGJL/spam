@@ -20,6 +20,7 @@ https://github.com/CGJL/spam/releases/tag/1.0.0
 https://github.com/CGJL/spam/wiki
 
 ## Documentation
+https://github.com/CGJL/spam/blob/master/doc/Documentation.pdf
 
 ## Installation
 https://github.com/CGJL/spam/wiki/Installation-guide
