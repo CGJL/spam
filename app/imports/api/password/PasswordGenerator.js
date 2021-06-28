@@ -1,8 +1,5 @@
 /** Class that generates a random password */
 class PasswordGenerator {
-  constructor() {
-
-  }
 
   /**
    *
@@ -11,9 +8,9 @@ class PasswordGenerator {
    * @returns Any integer between min and max inclusive
    */
   getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max) + 1;
-    return Math.floor(Math.random() * (max - min) + min);
+    const roundedMin = Math.ceil(min);
+    const roundedMax = Math.floor(max) + 1;
+    return Math.floor(Math.random() * (roundedMax - roundedMin) + roundedMin);
   }
 
   /**
@@ -21,7 +18,7 @@ class PasswordGenerator {
    * @param {Number} length Maximum length of the random password
    */
   getRandomPassword(length) {
-    length = Math.floor(length);
+    const roundedLength = Math.floor(length);
     const lowerAlphas = 'abcdefghijklmnopqrstuvwxyz';
     const upperAlphas = lowerAlphas.toUpperCase();
     const numbers = '1234567890';
@@ -30,7 +27,7 @@ class PasswordGenerator {
     const allowed = lowerAlphas + upperAlphas + numbers + symbols;
     const allowedLength = allowed.length;
     let pass = '';
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < roundedLength; i++) {
       pass += allowed[this.getRandomInt(0, allowedLength - 1)];
     }
     return pass;
