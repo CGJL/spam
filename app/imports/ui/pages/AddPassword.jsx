@@ -205,9 +205,9 @@ class AddPassword extends React.Component {
   };
 
   handleChange = (field, value) => {
-    if (field == 'password') {
+    if (field === 'password') {
       this.setState({ password: value });
-    } else if (field == 'confirmPassword') {
+    } else if (field === 'confirmPassword') {
       this.setState({ confirmPassword: value });
     }
   };
