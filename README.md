@@ -25,7 +25,11 @@ https://github.com/CGJL/spam/wiki
 https://github.com/CGJL/spam/wiki/Installation-guide
 
 ## Developer notes
-The following is a small team retrospective after release 1.0.0:  
+### Disclaimer
+
+By using our application you acknowledge and agree that the software is licensed "as-is". In no event shall CGJL be liable to you or anyone else for any direct or indirect damages of any kind. CGJL gives no guarantees, conditions, or warranties. Any implications that may arise are the user's sole responsibility. No oral, nor written information provided from CGJL shall create any legal bond. Thereby the use of our application is at your sole risk and discretion.
+
+### Team retrospective following release 1.0.0
 
 One rewarding element from developing this application was pushing ourselves to be conscious of security practices and possible vulnerabiities specific to a password manager app while doing so. We've had previous experience with web development, but the majority of the focus was on web development practices and technology rather than a combination of that and security.  
 
